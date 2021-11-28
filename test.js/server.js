@@ -1,32 +1,19 @@
-const http = require("http");
+import express from "express";
+import bodyParser from "body-parser";
+import path from "path";
+const __dirname = path.resolve();
 
-const server = http.createServer((req, res) => {
-  const url = req.url;
-  const method = req.method;
-  if (url === "/") {
-    res.setHeader("Content-Type", "text/html");
-    res.write("<h1>Hello User</h1>");
-    res.write(
-      '<form action="/create-user" method=post><input type="text" name="data"/><button>Submit</button></form>'
-    );
-  }
-  if (url === "/users") {
-    res.setHeader;
-    res.setHeader("Content-Type", "text/html");
-    res.write("<h1>Users List</h1>");
-  }
-  if (url === "/create-user") {
-    const data = [];
-    req.on("data", (chunks) => {
-      data.push(chunks);
-    });
-    req.on("end", () => {
-      const parseData = Buffer.concat(data).toString();
-      console.log(parseData);
-    });
-  }
-});
+import userRout from "./routes/user.mjs";
+import entryRout from "./routes/entry.mjs";
 
-server.listen(3000, () => {
+const app = express();
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
+
+app.use(entryRout);
+app.use(userRout);
+
+app.listen(3000, () => {
   console.log("server running on port 3000");
 });
